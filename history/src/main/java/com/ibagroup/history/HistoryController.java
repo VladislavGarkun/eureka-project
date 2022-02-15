@@ -1,4 +1,4 @@
-package com.ibagroup.math;
+package com.ibagroup.history;
 
 import com.ibagroup.common.TicketListDto;
 import lombok.RequiredArgsConstructor;
@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/math")
+@RequestMapping(value = "/history")
 @RequiredArgsConstructor
-public class MathController {
+public class HistoryController {
 
-    private final MathService service;
+    private final HistoryService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public TicketListDto getMathTickets(@RequestParam Integer quantity){
-        TicketListDto tickets = service.getMathTickets(quantity);
+        TicketListDto tickets = service.getHistoryTickets(quantity);
 
         return tickets;
     }

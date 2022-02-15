@@ -1,10 +1,10 @@
-package com.ibagroup.math;
+package com.ibagroup.history;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MathRepo extends JpaRepository<Ticket, Long> {
+public interface HistoryRepo extends JpaRepository<Ticket, Long> {
 
     Integer countBySubject(String subject);
 

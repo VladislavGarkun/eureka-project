@@ -1,40 +1,38 @@
 package com.ibagroup.math;
 
-import com.ibagroup.common.Ticket;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ibagroup.common.CommonMethods;
+import com.ibagroup.common.TicketDto;
+import com.ibagroup.common.TicketListDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class MathService {
 
     private final MathRepo repo;
+    private final TicketMapper mapper;
 
-    private final String MATH = "math";
+    private static final String MATH = "math";
 
-    @Autowired
-    public MathService(MathRepo repo){
-        this.repo = repo;
-    }
+    public TicketListDto getMathTickets(Integer quantity) {
+        List<Ticket> ticketsList;
+        List<TicketDto> ticketsListDto;
 
-    public Map<Long, Ticket> getMathTickets(Integer quantity) {
-        Map<Long, Ticket> tickets = new HashMap<>();
+        if(quantity >= repo.countBySubject(MATH)){
+            ticketsList = repo.findAllBySubject(MATH);
 
-        while(tickets.size() < quantity){
-            Ticket ticket = repo.findTicketBySubjectAndNumber(MATH, getRandomTicketNumber());
-            if(!tickets.containsValue(ticket)){
-                tickets.put(ticket.getId(), ticket);
-            }
+        }else {
+            List<Integer> ticketNumbers = CommonMethods.getTicketNumbers(quantity, repo.countBySubject(MATH));
+            ticketsList = repo.findTicketsBySubjectAndNumberIn(MATH, ticketNumbers);
         }
 
-        return tickets;
+        ticketsListDto = mapper.ticketToTicketDto(ticketsList);
+        TicketListDto ticketListDto = new TicketListDto(ticketsListDto);
+
+        return ticketListDto;
     }
 
-    private Integer getRandomTicketNumber() {
-        return (int)(Math.random() * repo.getTicketQuantity(MATH)) + 1;
-    }
 }

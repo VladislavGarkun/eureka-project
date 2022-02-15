@@ -1,33 +1,27 @@
 package com.ibagroup.examinator;
 
-
-import com.ibagroup.common.Ticket;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ibagroup.common.TicketListDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/examinator")
+@RequiredArgsConstructor
 public class ExaminatorController {
 
     private final ExaminatorService service;
 
-    @Autowired
-    public ExaminatorController(ExaminatorService service){
-        this.service = service;
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getTickets(@RequestParam(name = "subject") List<String> subjects) throws NotSuchSubjectException, TicketAmountException {
+        List<SubjectDto> subjectDto = service.createListSubjectDto(subjects);
+
+        TicketListDto tickets = service.getTickets(subjectDto);
+
+        return ResponseEntity.ok(tickets.getTicketListDto());
     }
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getTickets(@RequestBody List<SubjectDto> subjects){
-        Map<Long, Ticket> tickets = service.getTickets(subjects);
-
-        return ResponseEntity.ok(tickets.values());
-    }
 }
